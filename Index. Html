@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Location & Photo Share</title>
+
+<style>
+body{
+  font-family:Arial,sans-serif;
+  background:#f4f4f4;
+  padding:20px;
+}
+.box{
+  max-width:500px;
+  margin:auto;
+  background:white;
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 2px 10px #bbb;
+}
+button{
+  width:100%;
+  padding:14px;
+  margin:8px 0;
+  border:0;
+  border-radius:8px;
+  font-size:16px;
+  cursor:pointer;
+}
+.location{background:#6c35de;color:white;}
+.photo{background:#1683e8;color:white;}
+#result{
+  margin-top:15px;
+  padding:12px;
+  background:#eee;
+  border-radius:8px;
+  word-break:break-word;
+}
+img{
+  max-width:100%;
+  margin-top:10px;
+  border-radius:8px;
+}
+.small{
+  font-size:13px;
+  color:#555;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>📍 Location & 📷 Photo Share</h2>
+
+<p>
+આ page તમારી માહિતી મેળવતું નથી જ્યાં સુધી તમે
+તમારી જાતે Permission ન આપો.
+</p>
+
+<p class="small">
+Location માટે Browser Permission જરૂરી છે અને Photos માટે
+તમે પોતે ફોટો પસંદ કરવો પડશે.
+</p>
+
+<button class="location" onclick="getLocation()">
+📍 Share My Location
+</button>
+
+<button class="photo" onclick="document.getElementById('photos').click()">
+📷 Select Photos
+</button>
+
+<input
+  type="file"
+  id="photos"
+  accept="image/*"
+  multiple
+  style="display:none"
+  onchange="showPhotos(event)"
+>
+
+<div id="result">
+તમારી પસંદગી અહીં દેખાશે.
+</div>
+
+<div id="preview"></div>
+
+</div>
+
+<script>
+
+function getLocation(){
+
+  const result = document.getElementById("result");
+
+  if(!navigator.geolocation){
+    result.innerHTML =
+      "❌ તમારા browserમાં Location support નથી.";
+    return;
+  }
+
+  result.innerHTML =
+    "⏳ Location permission માંગવામાં આવી રહી છે...";
+
+  navigator.geolocation.getCurrentPosition(
+
+    function(position){
+
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      result.innerHTML =
+        "✅ Location તમારી મંજૂરીથી મળી છે.<br><br>" +
+        "Latitude: " + lat + "<br>" +
+        "Longitude: " + lon + "<br><br>" +
+        '<a target="_blank" href="https://www.google.com/maps?q='
+        + lat + ',' + lon +
+        '">📍 Google Mapsમાં જુઓ</a>';
+    },
+
+    function(error){
+
+      result.innerHTML =
+        "❌ Location share થઈ નથી.<br>" +
+        "કૃપા કરીને Browserમાં Location Permission Allow કરો.";
+    }
+  );
+}
+
+
+function showPhotos(event){
+
+  const files = event.target.files;
+  const preview = document.getElementById("preview");
+
+  preview.innerHTML =
+    "<h3>📷 Selected Photos</h3>";
+
+  if(files.length === 0){
+    preview.innerHTML +=
+      "કોઈ ફોટો પસંદ કર્યો નથી.";
+    return;
+  }
+
+  for(let i = 0; i < files.length; i++){
+
+    const file = files[i];
+
+    const img = document.createElement("img");
+
+    img.src = URL.createObjectURL(file);
+
+    preview.appendChild(img);
+  }
+}
+
+</script>
+
+</body>
+</html>
